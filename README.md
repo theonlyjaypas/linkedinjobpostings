@@ -157,4 +157,7 @@ The data is split across 11 CSV files, each focusing on a different aspect of th
 
 **Source:** [LinkedIn Job Postings (Kaggle)](https://www.kaggle.com/datasets/arshkon/linkedin-job-postings)
 
-- ~123,849 postings · 24,473 companies · 388 industries · 35 tracked skills
+- ~123,849 postings
+- 24,473 companies
+- 388 industries
+- 35 tracked skills
