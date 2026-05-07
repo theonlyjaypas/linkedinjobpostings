@@ -7,7 +7,8 @@ import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
-from analytics import (
+from analyze_data import (
+    get_engine, DB_CONFIG,
     top_skills_by_demand, top_skills_by_salary,
     top_industries_by_hiring, top_industries_by_salary,
     top_companies_by_hiring, top_companies_by_salary,
@@ -136,6 +137,13 @@ page = st.sidebar.radio(
 )
 st.sidebar.markdown("---")
 st.sidebar.caption("LinkedIn Job Postings 2023–2024  \n~124K postings · 11 CSV files")
+
+try:
+    with get_engine().connect() as _c:
+        pass
+    st.sidebar.success(f"MySQL: {DB_CONFIG['host']}/{DB_CONFIG['database']}", icon="🟢")
+except Exception as _e:
+    st.sidebar.error(f"DB unreachable: {_e}", icon="🔴")
 
 # ── Colour palette ─────────────────────────────────────────────────────────────
 BLUE   = "#0A66C2"   # LinkedIn blue
