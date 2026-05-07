@@ -1,7 +1,3 @@
-"""
-DATA 201 Group 2 — LinkedIn Job Postings Dashboard
-Streamlit web application with server-side analytics and Plotly charts.
-"""
 
 import streamlit as st
 import plotly.express as px

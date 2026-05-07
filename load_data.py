@@ -1,10 +1,3 @@
-"""
-ETL script — LinkedIn Job Postings (2023-2024)
-Loads and cleans all 11 CSV files into a MySQL database.
-
-Configure connection via environment variables (or edit DB_CONFIG defaults):
-  MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE
-"""
 
 import os
 import pandas as pd

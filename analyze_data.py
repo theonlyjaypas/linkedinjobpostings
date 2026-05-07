@@ -1,11 +1,3 @@
-"""
-analytics.py — Server-side analytics for LinkedIn Job Postings
-All functions return a pandas DataFrame ready to send to the frontend.
-
-Configure connection via environment variables (or edit DB_CONFIG defaults):
-  MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE
-"""
-
 import os
 import pandas as pd
 import mysql.connector
