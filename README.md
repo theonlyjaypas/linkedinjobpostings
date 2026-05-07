@@ -142,8 +142,19 @@ Salaries are normalized to annual USD across all pay periods (hourly, weekly, bi
 
 ---
 
-## Dataset
+## About the Dataset
 
-- **Source:** LinkedIn job postings 2023–2024
-- **Size:** ~123,849 postings across 11 CSV files
-- **Coverage:** 24,473 companies · 388 industries · 35 tracked skills
+The dataset is a collection of job postings on LinkedIn between 2023 and 2024, consisting of close to 124,000 postings from a wide range of companies and industries. Each posting includes:
+
+- Job titles and roles
+- Company names
+- Industry categories
+- Salary information (median and maximum pay)
+- Required skills
+- Job benefits
+
+The data is split across 11 CSV files, each focusing on a different aspect of the postings — industries, skills, benefits, salaries, and more. The breadth of the dataset across multiple industries and companies makes it well-suited for meaningful analytics on job demand and salary expectations.
+
+**Source:** [LinkedIn Job Postings (Kaggle)](https://www.kaggle.com/datasets/arshkon/linkedin-job-postings)
+
+- ~123,849 postings · 24,473 companies · 388 industries · 35 tracked skills
