@@ -144,7 +144,7 @@ Salaries are normalized to annual USD across all pay periods (hourly, weekly, bi
 
 ## About the Dataset
 
-The dataset is a collection of job postings on LinkedIn between 2023 and 2024, consisting of close to 124,000 postings from a wide range of companies and industries. Each posting includes:
+The dataset is a collection of job postings on LinkedIn between 2023 and 2024, consisting of close to 124,000 postings from a wide range of companies and industries, it is HISTORIC. Each posting includes:
 
 - Job titles and roles
 - Company names
