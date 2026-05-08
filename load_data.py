@@ -1,8 +1,10 @@
 
+# IMPORT NECESSARY LIBRARIES
 import os
 import pandas as pd
 from sqlalchemy import create_engine, text, event, VARCHAR
 
+# MYSQL SETUP
 DB_CONFIG = {
     "host":     os.getenv("MYSQL_HOST", "localhost"),
     "port":     int(os.getenv("MYSQL_PORT", "3306")),
@@ -11,6 +13,7 @@ DB_CONFIG = {
     "database": os.getenv("MYSQL_DATABASE", "linkedin_jobs"),
 }
 
+# CHANGE PERIOD VALUE FROM CATEGORICAL TO NUMERICAL
 PERIOD_TO_YEARLY = {
     "HOURLY":   2080,
     "WEEKLY":   52,
@@ -20,6 +23,7 @@ PERIOD_TO_YEARLY = {
 }
 
 
+# NORMALIZE YEARLY VALUES
 def normalize_yearly(row):
     multiplier = PERIOD_TO_YEARLY.get(str(row.get("pay_period", "")).upper(), None)
     if multiplier is None:
@@ -30,10 +34,11 @@ def normalize_yearly(row):
     return round(float(val) * multiplier, 2)
 
 
+# CSV LOADER
 def load_csv(path):
     return pd.read_csv(path, low_memory=False)
 
-
+# START MYSQL ENGINE
 def get_engine():
     cfg = DB_CONFIG
     url = (
@@ -51,7 +56,7 @@ def get_engine():
 
     return engine
 
-
+# RUN ETL [Extract, Transform, Load]
 def run_etl():
     engine = get_engine()
 
@@ -75,26 +80,20 @@ def run_etl():
 
     print("Dropped existing tables.")
 
-    # ------------------------------------------------------------------
-    # 1. industries
-    # ------------------------------------------------------------------
+    # FILE 1: INDUSTRIES
     df = load_csv("mappings/industries.csv")
     df = df.dropna(subset=["industry_name"])
     df.to_sql("industries", engine, if_exists="replace", index=False)
     print(f"industries: {len(df)} rows")
 
-    # ------------------------------------------------------------------
-    # 2. skills
-    # ------------------------------------------------------------------
+    # FILE 2: SKILLS
     df = load_csv("mappings/skills.csv")
     df = df.dropna(subset=["skill_name"])
     df.to_sql("skills", engine, if_exists="replace", index=False,
               dtype={"skill_abr": VARCHAR(50)})
     print(f"skills: {len(df)} rows")
 
-    # ------------------------------------------------------------------
-    # 3. companies
-    # ------------------------------------------------------------------
+    # FILE 3: COMPANIES
     df = load_csv("companies/companies.csv")
     df = df[["company_id", "name", "company_size", "state", "country", "city", "url"]]
     df = df.dropna(subset=["company_id"])
@@ -102,9 +101,7 @@ def run_etl():
     df.to_sql("companies", engine, if_exists="replace", index=False)
     print(f"companies: {len(df)} rows")
 
-    # ------------------------------------------------------------------
-    # 4. company_industries
-    # ------------------------------------------------------------------
+    # FILE 4: COMPANY INDUSTRIES
     df = load_csv("companies/company_industries.csv")
     ind_map = pd.read_sql("SELECT industry_id, industry_name FROM industries", engine)
     ind_name_to_id = dict(zip(ind_map["industry_name"], ind_map["industry_id"]))
@@ -116,9 +113,7 @@ def run_etl():
     df.to_sql("company_industries", engine, if_exists="replace", index=False)
     print(f"company_industries: {len(df)} rows")
 
-    # ------------------------------------------------------------------
-    # 5. employee_counts
-    # ------------------------------------------------------------------
+    # FILE 5. EMPLOYEE COUNTS
     df = load_csv("companies/employee_counts.csv")
     df = df.dropna(subset=["company_id"])
     df["company_id"] = df["company_id"].astype(int)
@@ -127,9 +122,7 @@ def run_etl():
     df.to_sql("employee_counts", engine, if_exists="replace", index=False)
     print(f"employee_counts: {len(df)} rows")
 
-    # ------------------------------------------------------------------
-    # 6. postings
-    # ------------------------------------------------------------------
+    # FILE 6. POSTINGS
     df = load_csv("postings.csv")
     keep = [
         "job_id", "company_id", "title", "location",
@@ -146,9 +139,7 @@ def run_etl():
     df.to_sql("postings", engine, if_exists="replace", index=False)
     print(f"postings: {len(df)} rows")
 
-    # ------------------------------------------------------------------
-    # 7. salaries
-    # ------------------------------------------------------------------
+    # FILE 7. SALARIES
     df = load_csv("jobs/salaries.csv")
     df = df.dropna(subset=["job_id"])
     df["job_id"] = df["job_id"].astype(int)
@@ -158,9 +149,7 @@ def run_etl():
     df.to_sql("salaries", engine, if_exists="replace", index=False)
     print(f"salaries: {len(df)} rows")
 
-    # ------------------------------------------------------------------
-    # 8. job_skills
-    # ------------------------------------------------------------------
+    # FILE 8. JOB SKILLS
     df = load_csv("jobs/job_skills.csv")
     df = df.dropna(subset=["job_id", "skill_abr"])
     df["job_id"] = df["job_id"].astype(int)
@@ -171,9 +160,7 @@ def run_etl():
               dtype={"skill_abr": VARCHAR(50)})
     print(f"job_skills: {len(df)} rows")
 
-    # ------------------------------------------------------------------
-    # 9. job_industries
-    # ------------------------------------------------------------------
+    # FILE 9. JOB INDUSTRIES
     df = load_csv("jobs/job_industries.csv")
     df = df.dropna(subset=["job_id", "industry_id"])
     df["job_id"] = df["job_id"].astype(int)
@@ -196,10 +183,9 @@ def run_etl():
               dtype={"type": VARCHAR(100)})
     print(f"benefits: {len(df)} rows")
 
-    # ------------------------------------------------------------------
-    # Add primary keys for query performance
-    # ------------------------------------------------------------------
-    print("Adding primary keys...")
+
+    # ADD PRIMARY KETS
+    print("ADDING PRIMARY KEYS")
     with engine.connect() as conn:
         conn.execute(text("ALTER TABLE industries ADD PRIMARY KEY (industry_id)"))
         conn.execute(text("ALTER TABLE skills ADD PRIMARY KEY (skill_abr)"))
@@ -214,9 +200,7 @@ def run_etl():
         conn.commit()
     print("Primary keys added.")
 
-    # ------------------------------------------------------------------
-    # Recreate analytics view
-    # ------------------------------------------------------------------
+    # RECREATE ANALYTICS VIEW
     with engine.connect() as conn:
         conn.execute(text("DROP VIEW IF EXISTS analytics"))
         conn.execute(text("""
@@ -251,6 +235,6 @@ def run_etl():
 
     print(f"\nDone. Data loaded into MySQL database '{DB_CONFIG['database']}' on {DB_CONFIG['host']}")
 
-
+# INITIATE RUN ETL
 if __name__ == "__main__":
     run_etl()

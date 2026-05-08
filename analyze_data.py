@@ -1,8 +1,11 @@
+
+# IMPORT NECESSARY LIBRARIES
 import os
 import pandas as pd
 import mysql.connector
 from sqlalchemy import create_engine, text
 
+# MYSQL SETUP
 DB_CONFIG = {
     "host":     os.getenv("MYSQL_HOST", "localhost"),
     "port":     int(os.getenv("MYSQL_PORT", "3306")),
@@ -14,6 +17,7 @@ DB_CONFIG = {
 _engine = None
 
 
+# START MYSQL ENGINE
 def get_engine():
     global _engine
     if _engine is None:
@@ -26,7 +30,7 @@ def get_engine():
     return _engine
 
 
-# ── Q1: Top skills by demand (# of job postings requiring that skill) ──────────
+# PART 1: Top skills by demand [# of job postings requiring that skill]
 def top_skills_by_demand(limit=15):
     sql = text("""
         SELECT sk.skill_name,
@@ -41,7 +45,7 @@ def top_skills_by_demand(limit=15):
         return pd.read_sql(sql, conn, params={"limit": limit})
 
 
-# ── Q2: Top skills by average annual salary ────────────────────────────────────
+# PART 2: Top skills by average annual salary
 def top_skills_by_salary(limit=15):
     sql = text("""
         SELECT sk.skill_name,
@@ -61,7 +65,7 @@ def top_skills_by_salary(limit=15):
         return pd.read_sql(sql, conn, params={"limit": limit})
 
 
-# ── Q3: Top industries by hiring volume ────────────────────────────────────────
+# PART 3: Top industries by hiring volume
 def top_industries_by_hiring(limit=15):
     sql = text("""
         SELECT i.industry_name,
@@ -76,7 +80,7 @@ def top_industries_by_hiring(limit=15):
         return pd.read_sql(sql, conn, params={"limit": limit})
 
 
-# ── Q4: Top industries by average annual salary ────────────────────────────────
+# PART 4: Top industries by average annual salary
 def top_industries_by_salary(limit=15):
     sql = text("""
         SELECT i.industry_name,
@@ -97,7 +101,7 @@ def top_industries_by_salary(limit=15):
         return pd.read_sql(sql, conn, params={"limit": limit})
 
 
-# ── Q5: Top companies by hiring volume ─────────────────────────────────────────
+# PART 5 : Top companies by hiring volume
 def top_companies_by_hiring(limit=15):
     sql = text("""
         SELECT c.name AS company_name,
@@ -112,7 +116,7 @@ def top_companies_by_hiring(limit=15):
         return pd.read_sql(sql, conn, params={"limit": limit})
 
 
-# ── Q6: Top companies by average annual salary ─────────────────────────────────
+# PART 6: Top companies by average annual salary
 def top_companies_by_salary(limit=15):
     sql = text("""
         SELECT c.name AS company_name,
@@ -132,7 +136,7 @@ def top_companies_by_salary(limit=15):
         return pd.read_sql(sql, conn, params={"limit": limit})
 
 
-# ── Q7: Salary distribution by experience level ────────────────────────────────
+# PART 7: Salary distribution by experience level
 def salary_by_experience():
     sql = text("""
         SELECT p.formatted_experience_level AS experience_level,
@@ -152,7 +156,7 @@ def salary_by_experience():
         return pd.read_sql(sql, conn)
 
 
-# ── Q8: Salary distribution by work type ──────────────────────────────────────
+# PART 8: Salary distribution by work type
 def salary_by_work_type():
     sql = text("""
         SELECT p.formatted_work_type AS work_type,
@@ -169,7 +173,7 @@ def salary_by_work_type():
         return pd.read_sql(sql, conn)
 
 
-# ── Q9: Top job titles by average salary ──────────────────────────────────────
+# PART 9: Top job titles by average salary
 def top_job_titles_by_salary(limit=15):
     sql = text("""
         SELECT p.title,
@@ -188,7 +192,7 @@ def top_job_titles_by_salary(limit=15):
         return pd.read_sql(sql, conn, params={"limit": limit})
 
 
-# ── Q10: Best combinations — industry + skill by avg salary ───────────────────
+# PART 10: Best combinations — industry + skill by avg salary
 def best_industry_skill_combos(limit=15):
     sql = text("""
         SELECT i.industry_name,
@@ -212,7 +216,7 @@ def best_industry_skill_combos(limit=15):
         return pd.read_sql(sql, conn, params={"limit": limit})
 
 
-# ── Q11: Remote vs on-site salary comparison ──────────────────────────────────
+# PART 11: Remote vs on-site salary comparison
 def remote_vs_onsite_salary():
     sql = text("""
         SELECT CASE WHEN p.remote_allowed = 1 THEN 'Remote' ELSE 'On-site' END AS work_mode,
@@ -228,7 +232,7 @@ def remote_vs_onsite_salary():
         return pd.read_sql(sql, conn)
 
 
-# ── Q12: Job search — filter postings by keyword / skill / industry ────────────
+# PART 12: Job search — filter postings by keyword / skill / industry
 def search_jobs(keyword="", skill="", industry="", limit=50):
     filters = []
     params = {"limit": limit}
@@ -273,20 +277,20 @@ def search_jobs(keyword="", skill="", industry="", limit=50):
         return pd.read_sql(sql, conn, params=params)
 
 
-# ── Quick test — run all queries and print row counts ─────────────────────────
+# TEST TO RUN QUERIES [PRINT RESSULTS]
 if __name__ == "__main__":
     queries = [
-        ("Q1  Top skills by demand",          top_skills_by_demand),
-        ("Q2  Top skills by salary",           top_skills_by_salary),
-        ("Q3  Top industries by hiring",       top_industries_by_hiring),
-        ("Q4  Top industries by salary",       top_industries_by_salary),
-        ("Q5  Top companies by hiring",        top_companies_by_hiring),
-        ("Q6  Top companies by salary",        top_companies_by_salary),
-        ("Q7  Salary by experience level",     salary_by_experience),
-        ("Q8  Salary by work type",            salary_by_work_type),
-        ("Q9  Top job titles by salary",       top_job_titles_by_salary),
-        ("Q10 Best industry+skill combos",     best_industry_skill_combos),
-        ("Q11 Remote vs on-site salary",       remote_vs_onsite_salary),
+        ("PART 1  Top skills by demand",          top_skills_by_demand),
+        ("PART 2  Top skills by salary",           top_skills_by_salary),
+        ("PART 3  Top industries by hiring",       top_industries_by_hiring),
+        ("PART 4  Top industries by salary",       top_industries_by_salary),
+        ("PART 5  Top companies by hiring",        top_companies_by_hiring),
+        ("PART 6  Top companies by salary",        top_companies_by_salary),
+        ("PART 7  Salary by experience level",     salary_by_experience),
+        ("PART 8  Salary by work type",            salary_by_work_type),
+        ("PART 9  Top job titles by salary",       top_job_titles_by_salary),
+        ("PART 10 Best industry+skill combos",     best_industry_skill_combos),
+        ("PART 11 Remote vs on-site salary",       remote_vs_onsite_salary),
     ]
 
     for label, fn in queries:
@@ -295,5 +299,5 @@ if __name__ == "__main__":
         print(f"{label}  ({len(df)} rows)")
         print(df.to_string(index=False))
 
-    print("\n\nQ12 Job search — keyword='engineer', skill='Engineering'")
+    print("\n\nPART 12 Job search — keyword='engineer', skill='Engineering'")
     print(search_jobs(keyword="engineer", skill="Engineering", limit=5).to_string(index=False))
