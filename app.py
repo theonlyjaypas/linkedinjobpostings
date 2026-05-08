@@ -1,3 +1,5 @@
+
+# IMPORT NECESSARY LIBRARIES & ANALYZE_DATA.PY
 import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
@@ -12,7 +14,7 @@ from analyze_data import (
     remote_vs_onsite_salary, search_jobs,
 )
 
-# ── Page config ────────────────────────────────────────────────────────────────
+# PAGE CONFIGURATION
 st.set_page_config(
     page_title="LinkedIn Jobs Analytics",
     page_icon=None,
@@ -20,7 +22,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# ── Global CSS — Inter font + polished component styles ────────────────────────
+# CSS SETUP FOR FONT AND POLISHED LOOK
 st.markdown("""
 <style>
 html, body, [class*="css"], .stMarkdown, .stText, button, input, select, textarea {
@@ -123,7 +125,7 @@ hr { border-color: rgba(255,255,255,0.07) !important; margin: 1.5rem 0 !importan
 </style>
 """, unsafe_allow_html=True)
 
-# ── Sidebar navigation ─────────────────────────────────────────────────────────
+# SIDEBAR NAVIGATION
 st.sidebar.markdown("### LinkedIn Jobs")
 st.sidebar.caption("DATA 201 · Group 2")
 page = st.sidebar.radio(
@@ -140,21 +142,20 @@ try:
 except Exception as _e:
     st.sidebar.error(f"DB unreachable: {_e}", icon="🔴")
 
-# ── Colour palette ─────────────────────────────────────────────────────────────
-BLUE   = "#0A66C2"   # LinkedIn blue
+# COLOR PALETTE
+BLUE   = "#0A66C2"   
 TEAL   = "#00BFA5"
 ORANGE = "#FF6B35"
 PURPLE = "#7C4DFF"
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+
 # PAGE 1 — OVERVIEW
-# ══════════════════════════════════════════════════════════════════════════════
 if page == "Overview":
     st.title("LinkedIn Job Market — Overview")
     st.caption("This dashboard analyzes 123,849 LinkedIn job postings collected between 2023 and 2024 across 24,473 companies and 388 industries. It surfaces trends in hiring demand, salary expectations, and the skills employers value most. Use the sidebar to explore deeper breakdowns by skill, industry, company, or experience level.")
 
-    # ── Fetch data once ────────────────────────────────────────────────────────
+    # FETCH DATA
     df_skills     = top_skills_by_demand(10)
     df_industries = top_industries_by_hiring(10)
     df_remote     = remote_vs_onsite_salary()
@@ -166,7 +167,7 @@ if page == "Overview":
     delta = int(df_remote[df_remote["work_mode"] == "Remote"]["avg_salary"].values[0] -
                 df_remote[df_remote["work_mode"] == "On-site"]["avg_salary"].values[0])
 
-    # ── KPI cards ─────────────────────────────────────────────────────────────
+    # KPI CARDS
     col1, col2, col3, col4 = st.columns(4)
     col1.metric("Total Postings", "123,849")
     col2.metric("Companies", "24,473")
@@ -175,7 +176,7 @@ if page == "Overview":
 
     st.markdown("---")
 
-    # ── Insight callouts ───────────────────────────────────────────────────────
+    # INSIGHTS CALLOUT
     c1, c2, c3 = st.columns(3)
     c1.info(f"**Most in-demand skill:** {df_skills.iloc[0]['skill_name']} — {df_skills.iloc[0]['job_count']:,} postings")
     c2.info(f"**Top hiring industry:** {df_industries.iloc[0]['industry_name']} — {df_industries.iloc[0]['job_count']:,} postings")
@@ -183,7 +184,7 @@ if page == "Overview":
 
     st.markdown("---")
 
-    # ── Row 1: Skills (left) + Industries (right) ──────────────────────────────
+    # ROW 1: Skills [LEFT] + Industries [RIGHT]
     col_left, col_right = st.columns(2)
 
     with col_left:
@@ -220,7 +221,7 @@ if page == "Overview":
 
     st.markdown("---")
 
-    # ── Row 2: Remote vs on-site (left) + Experience salary (right) ───────────
+    # ROW 2: Remote vs on-site [LEFT] + Experience salary [RIGHT]
     col_left2, col_right2 = st.columns(2)
 
     with col_left2:
@@ -257,20 +258,19 @@ if page == "Overview":
         st.plotly_chart(fig)
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+
 # PAGE 2 — SKILLS
-# ══════════════════════════════════════════════════════════════════════════════
 elif page == "Skills":
     st.title("Skills Analysis")
     st.caption("Skills are one of the strongest signals of what employers are actively looking for in the job market. This page breaks down which skills appear most frequently across all 123,849 postings and which ones are associated with the highest average annual salaries. The bubble chart reveals how demand and pay interact — helping identify skills that are both sought-after and well-compensated.")
 
     limit = st.slider("Number of skills to display", 5, 35, 15)
 
-    # ── Fetch data once ────────────────────────────────────────────────────────
+    # FETCH DATA
     df_demand = top_skills_by_demand(limit)
     df_salary = top_skills_by_salary(limit)
 
-    # ── Insight callout row ────────────────────────────────────────────────────
+    # INSIGHTS CALLOUT
     top_demand = df_demand.iloc[0]
     top_pay    = df_salary.iloc[0]
     c1, c2 = st.columns(2)
@@ -279,7 +279,7 @@ elif page == "Skills":
 
     st.markdown("---")
 
-    # ── Two-column layout — demand left, salary right ──────────────────────────
+    # TWO-COLUMN LAYOUT: DEMAND [LEFT] & SALARY [RIGHT]
     col_left, col_right = st.columns(2)
 
     with col_left:
@@ -331,7 +331,7 @@ elif page == "Skills":
 
     st.markdown("---")
 
-    # ── Bubble chart — salary vs demand ───────────────────────────────────────
+    # BUBBLE CHART: SALARY VS DEMAND
     st.subheader("Salary vs Demand")
     fig_bubble = px.scatter(
         df_salary,
@@ -358,20 +358,18 @@ elif page == "Skills":
     st.plotly_chart(fig_bubble)
 
 
-# ══════════════════════════════════════════════════════════════════════════════
 # PAGE 3 — INDUSTRIES
-# ══════════════════════════════════════════════════════════════════════════════
 elif page == "Industries":
     st.title("Industry Analysis")
     st.caption("Different industries vary widely in both the volume of jobs they post and the salaries they offer. This page compares 388 industries across hiring activity and average annual compensation, revealing which sectors are growing fastest and which offer the strongest pay. The combination chart at the bottom pinpoints the most lucrative industry and skill pairings in the dataset.")
 
     limit = st.slider("Number of industries to display", 5, 30, 15)
 
-    # ── Fetch data once ────────────────────────────────────────────────────────
+    # FETCH DATA
     df_hiring = top_industries_by_hiring(limit)
     df_salary = top_industries_by_salary(limit)
 
-    # ── Insight callouts ───────────────────────────────────────────────────────
+    # INSIGHTS CALLOUT
     top_hiring = df_hiring.iloc[0]
     top_pay    = df_salary.iloc[0]
     c1, c2 = st.columns(2)
@@ -380,7 +378,7 @@ elif page == "Industries":
 
     st.markdown("---")
 
-    # ── Two-column layout ──────────────────────────────────────────────────────
+    # TWO-COLUMN LAYOUT
     col_left, col_right = st.columns(2)
 
     with col_left:
@@ -430,7 +428,7 @@ elif page == "Industries":
 
     st.markdown("---")
 
-    # ── Best combos — full width ranked bar ───────────────────────────────────
+    # BEST COMBINATIONS [full width ranked bar]
     st.subheader("Best Industry + Skill Combinations")
     st.caption("Top pairings ranked by average annual salary — each bar is one industry + skill combination.")
     df_combo = best_industry_skill_combos(15)
@@ -457,20 +455,18 @@ elif page == "Industries":
         st.dataframe(df_combo[["industry_name", "skill_name", "avg_salary", "job_count"]], hide_index=True)
 
 
-# ══════════════════════════════════════════════════════════════════════════════
 # PAGE 4 — COMPANIES
-# ══════════════════════════════════════════════════════════════════════════════
 elif page == "Companies":
     st.title("Company Analysis")
     st.caption("With over 24,000 companies represented in this dataset, the job market is shaped by a mix of large-scale hirers and high-paying specialists. This page identifies which companies are posting the most jobs and which are offering the highest average salaries — two metrics that don't always align. Companies with fewer postings but higher pay often reflect specialized or senior-heavy roles.")
 
     limit = st.slider("Number of companies to display", 5, 25, 15)
 
-    # ── Fetch data once ────────────────────────────────────────────────────────
+    # FETCH DATA
     df_hiring = top_companies_by_hiring(limit)
     df_salary = top_companies_by_salary(limit)
 
-    # ── Insight callouts ───────────────────────────────────────────────────────
+    # INSIGHTS CALLOUT
     top_hiring = df_hiring.iloc[0]
     top_pay    = df_salary.iloc[0]
     c1, c2 = st.columns(2)
@@ -479,7 +475,7 @@ elif page == "Companies":
 
     st.markdown("---")
 
-    # ── Two-column layout ──────────────────────────────────────────────────────
+    # TWO-COLUMN LAYOUT
     col_left, col_right = st.columns(2)
 
     with col_left:
@@ -528,14 +524,12 @@ elif page == "Companies":
             st.dataframe(df_salary, hide_index=True)
 
 
-# ══════════════════════════════════════════════════════════════════════════════
 # PAGE 5 — SALARY INSIGHTS
-# ══════════════════════════════════════════════════════════════════════════════
 elif page == "Salary Insights":
     st.title("Salary Insights")
     st.caption("Salary in the job market is shaped by multiple factors — experience level, work arrangement, job title, and whether a role is remote or on-site. This page breaks down how each of these variables influences annual compensation across the dataset. Together, these views help identify where the highest-paying opportunities are concentrated and what attributes consistently drive salary upward.")
 
-    # ── Fetch data once ────────────────────────────────────────────────────────
+    # FETCH DATA
     df_exp     = salary_by_experience()
     df_wtype   = salary_by_work_type()
     df_remote  = remote_vs_onsite_salary()
@@ -550,7 +544,7 @@ elif page == "Salary Insights":
                 df_remote[df_remote["work_mode"] == "On-site"]["avg_salary"].values[0])
     top_title = df_titles.iloc[0]
 
-    # ── Insight callouts ───────────────────────────────────────────────────────
+    # INSIGHTS CALLOUT
     c1, c2, c3 = st.columns(3)
     c1.info(f"**Top experience level:** Executive — ${df_exp[df_exp['experience_level']=='Executive']['avg_salary'].values[0]:,.0f} avg/yr")
     c2.info(f"**Remote pay premium:** ${delta:,} more per year than on-site")
@@ -558,7 +552,7 @@ elif page == "Salary Insights":
 
     st.markdown("---")
 
-    # ── Row 1: Experience level (left) + Work type (right) ────────────────────
+    # ROW 1: Experience level [LEFT] + Work type [RIGHT]
     col_left, col_right = st.columns(2)
 
     with col_left:
@@ -598,7 +592,7 @@ elif page == "Salary Insights":
 
     st.markdown("---")
 
-    # ── Row 2: Remote vs on-site (left) + Top job titles (right) ─────────────
+    # ROW 2: Remote vs on-site [LEFT] + Top job titles [RIGHT]
     col_left2, col_right2 = st.columns(2)
 
     with col_left2:
@@ -640,16 +634,14 @@ elif page == "Salary Insights":
             st.dataframe(df_titles, hide_index=True)
 
 
-# ══════════════════════════════════════════════════════════════════════════════
 # PAGE 6 — JOB SEARCH
-# ══════════════════════════════════════════════════════════════════════════════
 elif page == "Job Search":
     st.title("Job Search")
     st.caption("Search across all 123,849 job postings using any combination of job title keyword, skill, or industry. Results are ranked by annual salary so the highest-paying matches surface first. The charts below each search update dynamically to show the salary distribution and top companies within your filtered results.")
 
     st.markdown("---")
 
-    # ── Search controls ────────────────────────────────────────────────────────
+    # SEARCH CONTROL
     col1, col2, col3, col4 = st.columns([3, 2, 2, 1])
     keyword  = col1.text_input("Job Title", placeholder="e.g. Data Scientist")
     skill    = col2.text_input("Skill", placeholder="e.g. Engineering")
@@ -669,7 +661,7 @@ elif page == "Job Search":
             has_salary = df["annual_salary"].notna()
             salary_df  = df[has_salary & (df["annual_salary"] <= 500000)].copy()
 
-            # ── Insight callouts ───────────────────────────────────────────────
+            # INSIGHTS CALLOUT
             c1, c2, c3 = st.columns(3)
             c1.metric("Results Found", f"{len(df):,}")
             if has_salary.any():
@@ -678,7 +670,7 @@ elif page == "Job Search":
 
             st.markdown("---")
 
-            # ── Charts: distribution (left) + top companies in results (right) ─
+            # CHARTS: distribution [LEFT] + top companies in results [RIGHT]
             if not salary_df.empty:
                 col_left, col_right = st.columns(2)
 
@@ -721,7 +713,7 @@ elif page == "Job Search":
 
             st.markdown("---")
 
-            # ── Results table ──────────────────────────────────────────────────
+            # RESULTS TABLE
             st.subheader(f"All Results  —  {len(df):,} postings")
             st.dataframe(
                 df.rename(columns={
@@ -732,3 +724,4 @@ elif page == "Job Search":
                 }),
                 hide_index=True,
             )
+
