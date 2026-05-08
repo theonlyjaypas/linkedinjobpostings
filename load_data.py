@@ -80,13 +80,13 @@ def run_etl():
     print("Dropped existing tables.")
 
     # FILE 1: INDUSTRIES [Lookup table mapping industry_id → industry_name across all postings]
-    df = load_csv("mappings/industries.csv")
+    df = load_csv("data/mappings/industries.csv")
     df = df.dropna(subset=["industry_name"])   # Remove any rows with no name
     df.to_sql("industries", engine, if_exists="replace", index=False)
     print(f"industries: {len(df)} rows")
 
     # FILE 2: SKILLS [Lookup table mapping skill abbreviation codes → full skill names]
-    df = load_csv("mappings/skills.csv")
+    df = load_csv("data/mappings/skills.csv")
     df = df.dropna(subset=["skill_name"])      # Remove unnamed skills
     # skill_abr is a VARCHAR PK — must specify type explicitly for MySQL
     df.to_sql("skills", engine, if_exists="replace", index=False,
@@ -94,7 +94,7 @@ def run_etl():
     print(f"skills: {len(df)} rows")
 
     # FILE 3: COMPANIES [Core company profiles including size bucket, location, and LinkedIn URL]
-    df = load_csv("companies/companies.csv")
+    df = load_csv("data/companies/companies.csv")
     df = df[["company_id", "name", "company_size", "state", "country", "city", "url"]]
     df = df.dropna(subset=["company_id"])      # Must have a valid ID to be usable
     df["company_id"] = df["company_id"].astype(int)
@@ -102,7 +102,7 @@ def run_etl():
     print(f"companies: {len(df)} rows")
 
     # FILE 4: COMPANY INDUSTRIES [Many-to-many mapping of which industries each company operates in]
-    df = load_csv("companies/company_industries.csv")
+    df = load_csv("data/companies/company_industries.csv")
     # The CSV has industry names, not IDs — look up IDs from the already-loaded table
     ind_map = pd.read_sql("SELECT industry_id, industry_name FROM industries", engine)
     ind_name_to_id = dict(zip(ind_map["industry_name"], ind_map["industry_id"]))
@@ -115,7 +115,7 @@ def run_etl():
     print(f"company_industries: {len(df)} rows")
 
     # FILE 5: EMPLOYEE COUNTS [Most recent employee and follower counts per company, recorded as a Unix timestamp]
-    df = load_csv("companies/employee_counts.csv")
+    df = load_csv("data/companies/employee_counts.csv")
     df = df.dropna(subset=["company_id"])
     df["company_id"] = df["company_id"].astype(int)
     # Keep only the most recent snapshot per company
@@ -125,7 +125,7 @@ def run_etl():
     print(f"employee_counts: {len(df)} rows")
 
     # FILE 6: POSTINGS [Core job postings with title, location, work type, experience level, and remote flag]
-    df = load_csv("postings.csv")
+    df = load_csv("data/postings.csv")
     keep = [
         "job_id", "company_id", "title", "location",
         "formatted_work_type", "formatted_experience_level",
@@ -142,7 +142,7 @@ def run_etl():
     print(f"postings: {len(df)} rows")
 
     # FILE 7: SALARIES [Salary ranges (min/med/max) per posting, normalized to annual USD for consistency]
-    df = load_csv("jobs/salaries.csv")
+    df = load_csv("data/jobs/salaries.csv")
     df = df.dropna(subset=["job_id"])
     df["job_id"] = df["job_id"].astype(int)
     # Compute normalized_yearly for every row using the pay period multiplier
@@ -153,7 +153,7 @@ def run_etl():
     print(f"salaries: {len(df)} rows")
 
     # FILE 8: JOB SKILLS [Many-to-many mapping of which skills are required by each job posting]
-    df = load_csv("jobs/job_skills.csv")
+    df = load_csv("data/jobs/job_skills.csv")
     df = df.dropna(subset=["job_id", "skill_abr"])
     df["job_id"] = df["job_id"].astype(int)
     # Only keep skills that exist in the skills lookup table (referential integrity)
@@ -165,7 +165,7 @@ def run_etl():
     print(f"job_skills: {len(df)} rows")
 
     # FILE 9: JOB INDUSTRIES [Many-to-many mapping of which industries each job posting belongs to]
-    df = load_csv("jobs/job_industries.csv")
+    df = load_csv("data/jobs/job_industries.csv")
     df = df.dropna(subset=["job_id", "industry_id"])
     df["job_id"] = df["job_id"].astype(int)
     df["industry_id"] = df["industry_id"].astype(int)
@@ -177,7 +177,7 @@ def run_etl():
     print(f"job_industries: {len(df)} rows")
 
     # FILE 10: BENEFITS [Per-posting list of offered benefits; inferred=1 means auto-detected, not explicitly listed]
-    df = load_csv("jobs/benefits.csv")
+    df = load_csv("data/jobs/benefits.csv")
     df = df.dropna(subset=["job_id", "type"])
     df["job_id"] = df["job_id"].astype(int)
     df["inferred"] = df["inferred"].fillna(0).astype(int)  # Default inferred flag to 0
