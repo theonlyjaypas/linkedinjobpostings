@@ -1,4 +1,4 @@
-# LinkedIn Job Postings Dashboard
+# LinkedIn Job Postings - Analytics Dashboard
 
 An interactive analytics dashboard built with Streamlit that explores ~124,000 LinkedIn job postings collected between 2023 and 2024. The app surfaces trends in hiring demand, salary expectations, in-demand skills, and industry breakdowns across 388 industries and 24,000+ companies.
 
