@@ -23,7 +23,7 @@ An interactive analytics dashboard built with Streamlit that explores ~124,000 L
 
 ## Tech Stack
 
-- **Frontend / App** — [Streamlit](https://streamlit.io/)
+- **Frontend / App** — [Streamlit](https://streamlit.io/) + CSS
 - **Charts** — [Plotly Express](https://plotly.com/python/plotly-express/)
 - **Database** — MySQL
 - **ORM / Query** — SQLAlchemy + pandas
@@ -35,11 +35,11 @@ An interactive analytics dashboard built with Streamlit that explores ~124,000 L
 
 ```
 .
-├── app.py            # Streamlit dashboard (6 pages)
-├── analyze_data.py   # Analytics query functions (12 queries → DataFrames)
-├── load_data.py      # ETL script — loads 11 CSV files into MySQL
-├── schema.sql        # Database schema + analytics view definition
-└── data/             # Source CSV files (not committed)
+├── app.py            # DASHBOARD USING STREAMLIT
+├── analyze_data.py   # ANALYTICS PIPELINE USING MYSQL
+├── load_data.py      # ETL PIPELINE
+├── schema.sql        # DATABASE SCHEMA
+└── data/             # DATASET (NOT COMMITTED)
     ├── postings.csv
     ├── mappings/
     │   ├── industries.csv
