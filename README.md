@@ -161,3 +161,5 @@ The data is split across 11 CSV files, each focusing on a different aspect of th
 - 24,473 companies
 - 388 industries
 - 35 tracked skills
+
+**NOTE**: Since the dataset is huge, we were not able to include the file on Github. Since the DB file is attached, the streamlit app will work regardless. But, if you want to test the ETL pipeline, download the dataset from Kaggle and saved it under the `data/` directory.
