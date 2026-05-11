@@ -118,7 +118,7 @@ streamlit run app.py
 
 ## Analytics Queries
 
-`analyze_data.py` exposes 12 functions, each returning a pandas DataFrame:
+`analyze_data.py` has 12 functions, each returning a pandas DataFrame:
 
 | Function | Description |
 |----------|-------------|
