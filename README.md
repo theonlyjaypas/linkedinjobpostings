@@ -4,7 +4,6 @@ An interactive analytics dashboard built with Streamlit that explores ~124,000 L
 
 **DATA 201 · Group 2**
 
----
 
 ## Features
 
@@ -19,8 +18,6 @@ An interactive analytics dashboard built with Streamlit that explores ~124,000 L
 | Salary Insights | Salary breakdown by experience level, work type, remote/on-site, and job title |
 | Job Search | Full-text search by keyword, skill, and industry with dynamic salary distribution charts |
 
----
-
 ## Tech Stack
 
 - **Frontend / App** — [Streamlit](https://streamlit.io/) + CSS
@@ -29,7 +26,7 @@ An interactive analytics dashboard built with Streamlit that explores ~124,000 L
 - **ORM / Query** — SQLAlchemy + pandas
 - **ETL** — pandas + mysql-connector-python
 
----
+
 
 ## Project Structure
 
@@ -55,7 +52,7 @@ An interactive analytics dashboard built with Streamlit that explores ~124,000 L
         └── benefits.csv
 ```
 
----
+
 
 ## Database Schema
 
@@ -73,7 +70,7 @@ employee_counts  salaries
 
 An `analytics` view denormalizes the core tables for fast dashboard queries.
 
----
+
 
 ## Setup
 
@@ -117,7 +114,7 @@ This drops and recreates all tables, loads the 11 CSVs with cleaning and normali
 streamlit run app.py
 ```
 
----
+
 
 ## Analytics Queries
 
@@ -140,7 +137,6 @@ streamlit run app.py
 
 Salaries are normalized to annual USD across all pay periods (hourly, weekly, biweekly, monthly, yearly).
 
----
 
 ## About the Dataset
 
