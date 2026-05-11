@@ -9,9 +9,9 @@ An interactive analytics dashboard built with Streamlit that explores ~124,000 L
 
 ## Features
 
-**Six dashboard pages:**
+**Dashboard:**
 
-| Page | What it shows |
+| PAGE | DESCRIPTION |
 |------|---------------|
 | Overview | KPI cards, top skills & industries, remote vs. on-site salary, salary by experience level |
 | Skills | Most in-demand skills, highest paying skills, salary-vs-demand bubble chart |
@@ -122,7 +122,7 @@ streamlit run app.py
 
 `analyze_data.py` has 12 functions, each returning a pandas DataFrame:
 
-| Function | Description |
+| FUNCTION | DESCRIPTION |
 |----------|-------------|
 | `top_skills_by_demand(limit)` | Skills ranked by number of job postings |
 | `top_skills_by_salary(limit)` | Skills ranked by average annual salary |
